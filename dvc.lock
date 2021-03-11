@@ -51,3 +51,6 @@ evaluation:
   - path: data/model/xgb-cl.pkl
     md5: d55400e4086aad8a2caeb1cf266f6016
     size: 703787
+  - path: score.json
+    md5: 29cf67fa0c662429af9e903dd9393d5c
+    size: 276
