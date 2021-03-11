@@ -3,7 +3,6 @@ import sys
 import yaml
 import numpy as np
 import pandas as pd
-import sys
 import pickle
 from sklearn.feature_selection import SelectFromModel
 from sklearn.feature_selection import RFE
@@ -79,7 +78,7 @@ def main():
     enc_val_df = cat_to_int(ms_val_df, enc_cols, maps)
     enc_ts_df = cat_to_int(ms_ts_df, enc_cols[:-1], maps)
 
-    if fs_select == '1':
+    if fs_select == 1:
         ch_cols = rfe(RandomForestClassifier(),enc_tr_df.iloc[:, :-1], enc_tr_df.iloc[:, -1])
 
         fin_tr_df = enc_tr_df.iloc[:, ch_cols]

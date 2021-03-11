@@ -9,3 +9,33 @@ stages:
     outs:
     - data/feature:
         persist: true
+  train:
+    cmd: python src/models/kitchen_sink/train.py data/feature/ks_train.csv
+    deps:
+    - data/feature/ks_train.csv
+    params:
+    - train.lr
+    - train.n_estimators
+    - train.objective
+    - train.folds
+    - train.param_comb
+    - train.score
+    - train.seed
+    outs:
+    - parameters.json:
+        persist: true
+  evaluation:
+    cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
+    deps:
+    - data/feature
+    - src/models/kitchen_sink/parameters.json
+    params:
+    - train.lr
+    - train.n_estimators
+    - train.objective
+    outs:
+    - data/model/xgb-cl.pkl:
+        persist: true
+    metrics:
+    - score.json:
+        cache: false

@@ -6,13 +6,54 @@ feature:
     size: 5070940
     nfiles: 5
   - path: src/models/kitchen_sink/featurize.py
-    md5: 2b2744075ce8d3788c8ea9659944c1bd
-    size: 3641
+    md5: a251c9c9277bb91d4e321ec6e8dde7f5
+    size: 3627
   params:
     params.yaml:
-      featurize.fs_select: 1
+      featurize.fs_select: 0
   outs:
   - path: data/feature
     md5: 82aac902014079161d10e6ecadc8456a.dir
     size: 1513011
     nfiles: 4
+train:
+  cmd: python src/models/kitchen_sink/train.py data/feature/ks_train.csv
+  deps:
+  - path: data/feature/ks_train.csv
+    md5: d0a211d8a9d73d8d0e461199d87e7eb1
+    size: 1210210
+  params:
+    params.yaml:
+      train.folds: 3
+      train.lr: 0.01
+      train.n_estimators: 1000
+      train.objective: multi:softmax
+      train.param_comb: 10
+      train.score: f1_weighted
+      train.seed: 443
+  outs:
+  - path: parameters.json
+    md5: 27792648ca6ab61a1e3d0d4ef3654755
+    size: 94
+evaluation:
+  cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
+  deps:
+  - path: data/feature
+    md5: 82aac902014079161d10e6ecadc8456a.dir
+    size: 1513011
+    nfiles: 4
+  - path: src/models/kitchen_sink/parameters.json
+    md5: 3713a1c0481349a0c8b683db04b0d1e4
+    size: 94
+  params:
+    params.yaml:
+      train.lr: 0.01
+      train.n_estimators: 1000
+      train.objective: multi:softmax
+  outs:
+  - path: data/model/xgb-cl.pkl
+    md5: ab2ae7ced4152bbad6c8d95563b521f7
+    size: 1336090
+  - path: score.json
+    md5: 29cf67fa0c662429af9e903dd9393d5c
+    size: 276
