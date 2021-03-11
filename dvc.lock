@@ -1,0 +1,18 @@
+feature:
+  cmd: python src/models/kitchen_sink/featurize.py data/data data/feature
+  deps:
+  - path: data/data
+    md5: e7bca3c665cd3995619c17283791527b.dir
+    size: 5070940
+    nfiles: 5
+  - path: src/models/kitchen_sink/featurize.py
+    md5: 2b2744075ce8d3788c8ea9659944c1bd
+    size: 3641
+  params:
+    params.yaml:
+      featurize.fs_select: 1
+  outs:
+  - path: data/feature
+    md5: 82aac902014079161d10e6ecadc8456a.dir
+    size: 1513011
+    nfiles: 4

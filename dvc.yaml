@@ -1,0 +1,11 @@
+stages:
+  feature:
+    cmd: python src/models/kitchen_sink/featurize.py data/data data/feature
+    deps:
+    - src/models/kitchen_sink/featurize.py
+    - data/data
+    params:
+    - featurize.fs_select
+    outs:
+    - data/feature:
+        persist: true
