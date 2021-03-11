@@ -1,10 +1,10 @@
 featurize:
   fs_select : 0
 train:
-  lr : 0.02
-  n_estimators : 200
+  lr : 0.01
+  n_estimators : 1000
   objective : 'multi:softmax'
-  folds : 5
+  folds : 3
   param_comb : 10
   score : 'f1_weighted'
   seed : 443

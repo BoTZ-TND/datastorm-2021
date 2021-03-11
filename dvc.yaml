@@ -28,6 +28,7 @@ stages:
     cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
     deps:
     - data/feature
+    - src/models/kitchen_sink/parameters.json
     params:
     - train.lr
     - train.n_estimators
