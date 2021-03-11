@@ -35,3 +35,19 @@ train:
   - path: parameters.json
     md5: d304ad595febcff7f91df17898851b62
     size: 96
+evaluation:
+  cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
+  deps:
+  - path: data/feature
+    md5: 52f651bc51b87d1b26468306207c790a.dir
+    size: 890457
+    nfiles: 4
+  params:
+    params.yaml:
+      train.lr: 0.02
+      train.n_estimators: 100
+      train.objective: multi:softmax
+  outs:
+  - path: data/model/xgb-cl.pkl
+    md5: d55400e4086aad8a2caeb1cf266f6016
+    size: 703787

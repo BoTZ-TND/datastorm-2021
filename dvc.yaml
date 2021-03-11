@@ -24,3 +24,14 @@ stages:
     outs:
     - parameters.json:
         persist: true
+  evaluation:
+    cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
+    deps:
+    - data/feature
+    params:
+    - train.lr
+    - train.n_estimators
+    - train.objective
+    outs:
+    - data/model/xgb-cl.pkl:
+        persist: true
