@@ -1,8 +1,8 @@
 stages:
   feature:
-    cmd: python src/models/kitchen_sink/featurize.py data/data data/feature
+    cmd: python src/models/Kitchen_sink/featurize.py data/data data/feature
     deps:
-    - src/models/kitchen_sink/featurize.py
+    - src/models/Kitchen_sink/featurize.py
     - data/data
     params:
     - featurize.fs_select
@@ -10,9 +10,9 @@ stages:
     - data/feature:
         persist: true
   train:
-    cmd: python src/models/kitchen_sink/train.py data/feature/ks_train.csv
+    cmd: python src/models/Kitchen_sink/train.py data/feature/ks_train.csv
     deps:
-    - data/feature/ks_train.csv
+    - data/feature/cb_train.csv
     params:
     - train.lr
     - train.n_estimators
@@ -29,10 +29,6 @@ stages:
     deps:
     - data/feature
     - src/models/kitchen_sink/parameters.json
-    params:
-    - train.lr
-    - train.n_estimators
-    - train.objective
     outs:
     - data/model/xgb-cl.pkl:
         persist: true

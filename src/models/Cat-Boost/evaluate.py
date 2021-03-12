@@ -11,7 +11,7 @@ import pandas as pd
 from datetime import datetime
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
-from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
 from sklearn.metrics import  accuracy_score, precision_score, recall_score, f1_score, precision_recall_curve
 
 param = yaml.safe_load(open('params.yaml'))['evaluate']
@@ -26,13 +26,7 @@ val_df = pd.read_csv(val_input)
 with open('parameters.json', 'r')as pf:
     params = json.load(pf)
 
-lr = param['lr']
-n_est = param['n_estimators']
-obj = param['objective']
-
-
-xgbc = XGBClassifier(learning_rate=lr, n_estimators=n_est, objective=obj,
-                    silent=True, nthread=1, **params)
+xgbc = CatBoostClassifier(**params)
 
 
 xgbc.fit(tr_df.iloc[:, :-1], tr_df.iloc[:, -1])
@@ -49,6 +43,6 @@ y_ts_pred = xgbc.predict(val_df.iloc[:, :-1])
 y_test = val_df.iloc[:, -1]
 
 with open('score.json','w') as pf:
-    json.dump({'train' : {'accuracy' : accuracy_score(y_train, y_tr_pred), 'precision' : precision_score(y_train, y_tr_pred, average='macro'), 'recall' : recall_score(y_train, y_tr_pred, average='macro'), 'f1-score' : f1_score(y_train, y_tr_pred, average='macro')},
-    'test' : {'accuracy' : accuracy_score(y_test, y_ts_pred), 'precision' : precision_score(y_test, y_ts_pred, average='macro'), 'recall' : recall_score(y_test, y_ts_pred, average='macro'), 'f1-score' : f1_score(y_test, y_ts_pred, average='macro')}
+    json.dump({'train' : {'accuracy' : accuracy_score(y_train, y_tr_pred), 'precision' : precision_score(y_train, y_tr_pred, average='weighted'), 'recall' : recall_score(y_train, y_tr_pred, average='weighted'), 'f1-score' : f1_score(y_train, y_tr_pred, average='weighted')},
+    'test' : {'accuracy' : accuracy_score(y_test, y_ts_pred), 'precision' : precision_score(y_test, y_ts_pred, average='macro'), 'recall' : recall_score(y_test, y_ts_pred, average='weighted'), 'f1-score' : f1_score(y_test, y_ts_pred, average='weighted')}
     }, pf)
