@@ -29,10 +29,6 @@ stages:
     deps:
     - data/feature
     - src/models/kitchen_sink/parameters.json
-    params:
-    - train.lr
-    - train.n_estimators
-    - train.objective
     outs:
     - data/model/xgb-cl.pkl:
         persist: true

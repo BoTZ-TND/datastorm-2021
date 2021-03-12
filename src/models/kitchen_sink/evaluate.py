@@ -49,6 +49,6 @@ y_ts_pred = xgbc.predict(val_df.iloc[:, :-1])
 y_test = val_df.iloc[:, -1]
 
 with open('score.json','w') as pf:
-    json.dump({'train' : {'accuracy' : accuracy_score(y_train, y_tr_pred), 'precision' : precision_score(y_train, y_tr_pred, average='weighted'), 'recall' : recall_score(y_train, y_tr_pred, average='weighted'), 'f1-score' : f1_score(y_train, y_tr_pred, average='weighted')},
-    'test' : {'accuracy' : accuracy_score(y_test, y_ts_pred), 'precision' : precision_score(y_test, y_ts_pred, average='macro'), 'recall' : recall_score(y_test, y_ts_pred, average='weighted'), 'f1-score' : f1_score(y_test, y_ts_pred, average='weighted')}
+    json.dump({'train' : {'accuracy' : accuracy_score(y_train, y_tr_pred), 'precision' : precision_score(y_train, y_tr_pred, average='macro'), 'recall' : recall_score(y_train, y_tr_pred, average='macro'), 'f1-score' : f1_score(y_train, y_tr_pred, average='macro')},
+    'test' : {'accuracy' : accuracy_score(y_test, y_ts_pred), 'precision' : precision_score(y_test, y_ts_pred, average='macro'), 'recall' : recall_score(y_test, y_ts_pred, average='macro'), 'f1-score' : f1_score(y_test, y_ts_pred, average='macro')}
     }, pf)
