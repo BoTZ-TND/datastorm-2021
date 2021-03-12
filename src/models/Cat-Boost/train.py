@@ -95,7 +95,6 @@ device = param['device']
 clf = CatBoostClassifier(thread_count=3,
                          loss_function=loss_func,
                          od_type = 'Iter',
-                         classes_count=3,
                          task_type=device,
                          verbose= False)
 
@@ -112,7 +111,7 @@ n_iteration = param['n_iter']
 opt = BayesSearchCV(clf,
                     search_spaces,
                     scoring=score,
-                    cv=prd,
+                    cv=skf,
                     n_iter=n_iteration,
                     n_jobs=1,  # use just 1 job with CatBoost in order to avoid segmentation fault
                     return_train_score=False,

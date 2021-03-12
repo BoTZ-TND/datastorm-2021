@@ -16,8 +16,8 @@ from sklearn.metrics import  accuracy_score, precision_score, recall_score, f1_s
 
 param = yaml.safe_load(open('params.yaml'))['evaluate']
 
-train_input = os.path.join(sys.argv[1], 'ks_train.csv')
-val_input = os.path.join(sys.argv[1], 'ks_validation.csv')
+train_input = os.path.join(sys.argv[1], 'cba_train.csv')
+val_input = os.path.join(sys.argv[1], 'cba_validation.csv')
 model_path = os.path.join(sys.argv[2])
 
 tr_df = pd.read_csv(train_input)
