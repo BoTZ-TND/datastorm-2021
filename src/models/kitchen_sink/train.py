@@ -1,6 +1,8 @@
 import os 
 import sys
 import warnings
+
+from sklearn.utils import shuffle
 warnings.filterwarnings('ignore')
 import json
 import yaml
@@ -41,7 +43,7 @@ n_est = param['n_estimators']
 obj = param['objective']
 
 
-xgb = XGBClassifier(learning_rate=lr, n_estimators=n_est, objective=obj,
+xgb = XGBClassifier(learning_rate=lr, n_estimators=n_est, objective=obj, shuffle=True,
                     silent=True, nthread=1)
 
 folds = param['folds']

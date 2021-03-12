@@ -1,5 +1,5 @@
 featurize:
-  fs_select : 0
+  fs_select : 1
 train:
   lr : 0.01
   n_estimators : 1000
@@ -8,6 +8,11 @@ train:
   param_comb : 10
   score : 'f1_weighted'
   seed : 443
+  train_size : 0.9
+  f1-type : macro
+  loss_function: MultiClass
+  device : GPU
+  n_iter : 100
 evaluate:
   lr : 0.02
   n_estimators : 100
