@@ -47,13 +47,6 @@ tr_df = pd.read_csv(df_path)
 X = tr_df.iloc[:, :-1]
 y = tr_df.iloc[:, -1]
 
-frac = param['train_size']
-train_sz = int(tr_df.shape[0]*frac)
-val_sz  = tr_df.shape[0]-train_sz
-ind_list = [-1,]*train_sz+[0,]*val_sz
-
-prd = PredefinedSplit(ind_list)
-
 def report_perf(optimizer, X, y,title, callbacks=None):
     """
     A wrapper for measuring time and performances of different optmizers
@@ -112,7 +105,7 @@ n_iteration = param['n_iter']
 opt = BayesSearchCV(clf,
                     search_spaces,
                     scoring=score,
-                    cv=prd,
+                    cv=skf,
                     n_iter=n_iteration,
                     n_jobs=1,  # use just 1 job with CatBoost in order to avoid segmentation fault
                     return_train_score=False,
@@ -120,8 +113,8 @@ opt = BayesSearchCV(clf,
                     refit=True,
                     random_state=sd)
 
-best_params = report_perf(opt, X, y,'CatBoost', 
-                          callbacks=[VerboseCallback(100), 
+best_params = report_perf(opt, X, y,'CatBoost',
+                          callbacks=[VerboseCallback(100),
                                      DeadlineStopper(60*10)])
 
 with open('parameters.json', 'w') as pd:

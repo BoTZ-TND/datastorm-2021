@@ -1,8 +1,8 @@
 stages:
   feature:
-    cmd: python src/models/Kitchen_sink/featurize.py data/data data/feature
+    cmd: python src/models/Cat-Boost/featurize.py data/data data/feature
     deps:
-    - src/models/Kitchen_sink/featurize.py
+    - src/models/Cat-Boost/featurize.py
     - data/data
     params:
     - featurize.fs_select
@@ -10,28 +10,31 @@ stages:
     - data/feature:
         persist: true
   train:
-    cmd: python src/models/Kitchen_sink/train.py data/feature/ks_train.csv
+    cmd: python src/models/Cat-Boost/train.py data/feature/cb_train.csv
     deps:
     - data/feature/cb_train.csv
     params:
-    - train.lr
-    - train.n_estimators
-    - train.objective
-    - train.folds
-    - train.param_comb
-    - train.score
+    - train.train_size
+    - train.f1-type
+    - train.loss_function
+    - train.device
+    - train.n_iter
     - train.seed
     outs:
     - parameters.json:
         persist: true
   evaluation:
-    cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
+    cmd: python src/models/Cat-Boost/evaluate.py data/feature data/model/cat-cl.pkl
     deps:
     - data/feature
-    - src/models/kitchen_sink/parameters.json
+    - src/models/Cat-Boost/parameters.json
+    params:
+    - train.lr
+    - train.n_estimators
+    - train.objective
     outs:
-    - data/model/xgb-cl.pkl:
+    - data/model/cat-cl.pkl:
         persist: true
     metrics:
     - score.json:
-        cache: false
+        cache: true
