@@ -1,5 +1,5 @@
 featurize:
-  fs_select : 0
+  fs_select : 1
 train:
   lr : 0.01
   n_estimators : 1000

@@ -38,4 +38,4 @@ stages:
         persist: true
     metrics:
     - score.json:
-        cache: true
+        cache: false
