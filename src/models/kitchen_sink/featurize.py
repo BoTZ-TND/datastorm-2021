@@ -8,6 +8,7 @@ from sklearn.feature_selection import SelectFromModel
 from sklearn.feature_selection import RFE
 from sklearn.feature_selection import RFECV
 from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 
 params = yaml.safe_load(open('params.yaml'))['featurize']
 
@@ -36,15 +37,32 @@ col_mask = ['Gender', 'Age', 'Ethnicity', 'Educational_Level',
 enc_cols = ['Gender','Ethnicity', 'Educational_Level',
        'Income', 'Country_region', 'Hotel_Type','Meal_Type', 'Visted_Previously', 'Previous_Cancellations',
        'Deposit_type', 'Booking_channel', 'Required_Car_Parking', 'Use_Promotion', 'Discount_Rate', 'Reservation_Status']
-    
+
+def date_type_conversion( df ,columns):
+    for each in columns:
+        for index in df.index:
+                val_in = str(df.loc[index,each]).strip().split('/')
+                df.loc[index,each] = '/'.join([val_in[1],val_in[0],val_in[2]])
+            #print('/'.join([check_in[1],check_in[0],check_in[2]]))
+
+        df[each] = pd.to_datetime(df[each],dayfirst=True)
+    return df
+
+def split_date(df,columns):
+    df = df.copy()
+    for each in columns:
+        df['dayofweek_'+each] = df[each].map(lambda x:x.dayofweek)
+    return df
+
 def cat_to_int(df, columns, enc={}):
     df = df.copy()
-    if enc == {}:
-        maps = {}
+    if enc == {} or len(columns) > len(enc) :
+        maps = enc
         for col in columns:
-            mapping = {k: i for i,k in enumerate(df.loc[:,col].unique())}
-            df[col] = df[col].map(mapping)
-            maps[col] = mapping
+            if col not in maps:
+                mapping = {k: i for i,k in enumerate(df.loc[:,col].unique())}
+                maps[col] = mapping
+            df[col] = df[col].map(maps[col])
         return df, maps
     else:
         maps = enc
@@ -55,7 +73,7 @@ def cat_to_int(df, columns, enc={}):
 def rfe(model, X, y):
     names=pd.DataFrame(X.columns)
 
-    rfe_mod = RFE(estimator=model, n_features_to_select=10, step=1) #RFECV(lin_reg, step=1, cv=5) 
+    rfe_mod = RFE(estimator=model, n_features_to_select=14, step=1) #RFECV(lin_reg, step=1, cv=5) 
     myvalues=rfe_mod.fit(X,y)
     myvalues.support_
     myvalues.ranking_ 
@@ -70,16 +88,24 @@ def main():
     val_df = pd.read_csv(val_input)
     ts_df = pd.read_csv(test_input)
 
-    ms_tr_df = tr_df.loc[:, col_mask]
-    ms_val_df = val_df.loc[:, col_mask]
-    ms_ts_df = ts_df.loc[:, col_mask[:-1]]
+    dy_tr_df = date_type_conversion(tr_df,['Expected_checkin','Expected_checkout', 'Booking_date'])
+    dy_val_df = date_type_conversion(val_df,['Expected_checkin','Expected_checkout', 'Booking_date'])
+    dy_ts_df = date_type_conversion(ts_df,['Expected_checkin','Expected_checkout', 'Booking_date'])
 
-    enc_tr_df, maps = cat_to_int(ms_tr_df, enc_cols)
+    sp_tr_df = split_date(dy_tr_df,['Expected_checkin'])
+    sp_val_df = split_date(dy_val_df,['Expected_checkin'])
+    sp_ts_df = split_date(dy_ts_df,['Expected_checkin'])
+
+    ms_tr_df = sp_tr_df.loc[:, col_mask]
+    ms_val_df = sp_val_df.loc[:, col_mask]
+    ms_ts_df = sp_ts_df.loc[:, col_mask[:-1]]
+
+    enc_tr_df, maps = cat_to_int(ms_tr_df, enc_cols,{'Reservation_Status' : {'Check-In' : 1, 'Canceled' : 2, 'No-Show': 3},})
     enc_val_df = cat_to_int(ms_val_df, enc_cols, maps)
     enc_ts_df = cat_to_int(ms_ts_df, enc_cols[:-1], maps)
 
     if fs_select == 1:
-        ch_cols = rfe(RandomForestClassifier(),enc_tr_df.iloc[:, :-1], enc_tr_df.iloc[:, -1])
+        ch_cols = rfe(XGBClassifier(),enc_tr_df.iloc[:, :-1], enc_tr_df.iloc[:, -1])
 
         fin_tr_df = enc_tr_df.iloc[:, ch_cols]
         fin_tr_df['Reservation_Status'] = enc_tr_df.iloc[:, -1]

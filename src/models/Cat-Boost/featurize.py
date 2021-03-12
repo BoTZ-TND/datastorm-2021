@@ -86,15 +86,15 @@ def total_num_participants(df,columns = ['Adults','Children','Babies'],column_na
         df[column_name] =df[column_name]+df[each]
 
     return df
-
 def cat_to_int(df, columns, enc={}):
     df = df.copy()
-    if enc == {}:
-        maps = {}
+    if enc == {} or len(columns) > len(enc) :
+        maps = enc
         for col in columns:
-            mapping = {k: i for i,k in enumerate(df.loc[:,col].unique())}
-            df[col] = df[col].map(mapping)
-            maps[col] = mapping
+            if col not in maps:
+                mapping = {k: i for i,k in enumerate(df.loc[:,col].unique())}
+                maps[col] = mapping
+            df[col] = df[col].map(maps[col])
         return df, maps
     else:
         maps = enc
@@ -144,7 +144,7 @@ def main():
     ms_val_df = tp_val_df.loc[:, col_mask]
     ms_ts_df = tp_ts_df.loc[:, ['Reservation-id']+col_mask[:-1]]
 
-    enc_tr_df, maps = cat_to_int(ms_tr_df, enc_cols)
+    enc_tr_df, maps = cat_to_int(ms_tr_df, enc_cols, {'Reservation_Status' : {'Check-In' : 1, 'Canceled' : 2, 'No-Show': 3},})
     enc_val_df = cat_to_int(ms_val_df, enc_cols, maps)
     enc_ts_df = cat_to_int(ms_ts_df, enc_cols[:-1], maps)
 
