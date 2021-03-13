@@ -1,61 +1,59 @@
-schema: '2.0'
-stages:
-  feature:
-    cmd: python src/models/Cat-Boost/featurize.py data/data data/feature
-    deps:
-    - path: data/data
-      md5: e7bca3c665cd3995619c17283791527b.dir
-      size: 5070940
-      nfiles: 5
-    - path: src/models/Cat-Boost/featurize.py
-      md5: 5af2ae8135ddbd01977b0d7327f3374e
-      size: 6508
-    params:
-      params.yaml:
-        featurize.fs_select: 1
-    outs:
-    - path: data/feature
-      md5: 45959291f1cdb23c421134e878b30ac0.dir
-      size: 2462995
-      nfiles: 7
-  train:
-    cmd: python src/models/Kitchen_sink/train.py data/feature/ks_train.csv
-    deps:
-    - path: data/feature/cb_train.csv
-      md5: 2150d81126963e02a52e40991729093d
-      size: 1311004
-    params:
-      params.yaml:
-        train.folds: 3
-        train.lr: 0.01
-        train.n_estimators: 1000
-        train.objective: multi:softmax
-        train.param_comb: 10
-        train.score: f1_macro
-        train.seed: 443
-    outs:
-    - path: parameters.json
-      md5: 27792648ca6ab61a1e3d0d4ef3654755
-      size: 94
-  evaluation:
-    cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
-    deps:
-    - path: data/feature
-      md5: 65f139576689e1cbb31623f641189df8.dir
-      size: 2847333
-      nfiles: 7
-    - path: src/models/kitchen_sink/parameters.json
-      md5: 3713a1c0481349a0c8b683db04b0d1e4
-      size: 94
-    params:
-      params.yaml:
-        train.lr: 0.01
-        train.n_estimators: 1000
-        train.objective: multi:softmax
-    outs:
-    - path: data/model/xgb-cl.pkl
-      md5: 88208e18bd608ca95d57e01863926f47
-      size: 1299523
-    - path: score.json
-      md5: ca897952db25125a3f4739b1f4ed7daa
-      size: 276
+feature:
+  cmd: python src/models/Cat-Boost/featurize_adv.py data/data data/feature
+  deps:
+  - path: data/data
+    md5: e7bca3c665cd3995619c17283791527b.dir
+    size: 5070940
+    nfiles: 5
+  - path: src/models/Cat-Boost/featurize.py
+    md5: 5af2ae8135ddbd01977b0d7327f3374e
+    size: 6508
+  params:
+    params.yaml:
+      featurize.fs_select: 0
+  outs:
+  - path: data/feature
+    md5: 7abd1c36287849cf7ee322157ccd81a1.dir
+    size: 11016170
+    nfiles: 10
+train:
+  cmd: python src/models/Cat-Boost/train.py data/feature/cba_train.csv
+  deps:
+  - path: data/feature/cb_train.csv
+    md5: fb4415a34d42cbb1b00d118bde169ea9
+    size: 1311004
+  params:
+    params.yaml:
+      train.device: GPU
+      train.f1-type: macro
+      train.loss_function: MultiClass
+      train.n_iter: 100
+      train.seed: 443
+      train.train_size: 0.9
+  outs:
+  - path: parameters.json
+    md5: 3f79b19a72a5b1f79d0d2e6728963aaa
+    size: 193
+evaluation:
+  cmd: python src/models/kitchen_sink/evaluate.py data/feature data/model/xgb-cl.pkl
+  deps:
+  - path: data/feature
+    md5: 65f139576689e1cbb31623f641189df8.dir
+    size: 2847333
+    nfiles: 7
+  - path: src/models/kitchen_sink/parameters.json
+    md5: 3713a1c0481349a0c8b683db04b0d1e4
+    size: 94
+  params:
+    params.yaml:
+      train.lr: 0.01
+      train.n_estimators: 1000
+      train.objective: multi:softmax
+  outs:
+  - path: data/model/xgb-cl.pkl
+    md5: 88208e18bd608ca95d57e01863926f47
+    size: 1299523
+  - path: score.json
+    md5: ca897952db25125a3f4739b1f4ed7daa
+    size: 276
+

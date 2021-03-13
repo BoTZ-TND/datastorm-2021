@@ -88,7 +88,6 @@ device = param['device']
 clf = CatBoostClassifier(thread_count=3,
                          loss_function=loss_func,
                          od_type = 'Iter',
-                         classes_count=3,
                          task_type=device,
                          verbose= False)
 

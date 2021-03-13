@@ -1,6 +1,7 @@
 stages:
   feature:
-    cmd: python src/models/Cat-Boost/featurize.py data/data data/feature
+    cmd: python src/models/Cat-Boost/featurize_adv.py data/data data/feature
+
     deps:
     - src/models/Cat-Boost/featurize.py
     - data/data
@@ -10,7 +11,8 @@ stages:
     - data/feature:
         persist: true
   train:
-    cmd: python src/models/Cat-Boost/train.py data/feature/cb_train.csv
+    cmd: python src/models/Cat-Boost/train.py data/feature/cba_train.csv
+
     deps:
     - data/feature/cb_train.csv
     params:
@@ -28,10 +30,6 @@ stages:
     deps:
     - data/feature
     - src/models/Cat-Boost/parameters.json
-    params:
-    - train.lr
-    - train.n_estimators
-    - train.objective
     outs:
     - data/model/cat-cl.pkl:
         persist: true
