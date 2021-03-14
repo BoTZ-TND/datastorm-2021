@@ -133,3 +133,4 @@ dmypy.json
 #CatBoost logs
 /src/models/Cat-Boost/catboost_info/
 catboost_info/
+src/scripts/NeuralNet/predicts/
